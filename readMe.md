@@ -71,4 +71,71 @@ node处理post
 
 
 
-![](https://raw.githubusercontent.com/mannixchan/Pics/master/img/20210224231921.png)
+# 连接数据库
+
+ mysql, 是webServer中最流行的关系型数据库
+
+* 如何建库建表
+* 建表时候的常用数据类型
+* sql语句实现增删改查
+
+增删改查
+
+##### 增
+
+增加该
+
+#### 增加
+
+增删改查
+
+```sql
+-- 增加
+insert into users(username, `password`, realname)values('zhangshan', '123', '张三');
+-- 查询
+
+select * from users;  -- 尽量不要使用✳号, 有可能会导致性能问题
+select id, username from users;
+select * from users where username='zhangsan' and `password`='123'; 
+select * from users where username like '%zhang%' order by id;
+
+--更新
+update users set realname='李四' where usernmae='lisi'
+-- 删除
+delete from users where username='list'
+
+
+--safe mode
+
+ 
+
+
+```
+
+
+
+#### nodejs操作mysql
+
+```js
+npm i mysql --registry=https...taobao
+// index.js
+const myusql = require('mysql')
+const con = mysql.createCommection({
+    host:
+    user:
+    password
+    port:
+    dataBase:
+    
+})
+//开始链结
+con.commect()
+ 
+```
+
+
+
+
+
+
+

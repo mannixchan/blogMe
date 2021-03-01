@@ -1,5 +1,5 @@
 const {SuccessModel, ErrorModel} = require('../model/resModel')
-const {getList} = require('../controller/blog')
+const {getList, getBlogDetail, getAddNew} = require('../controller/blog')
 
 const handleBlogRouter = (req, res) => {
   const method = req.method
@@ -16,14 +16,20 @@ const handleBlogRouter = (req, res) => {
     // }
   }
   if(method == 'GET' && path == '/api/blog/detail') {
-    return {
-      message: '获取博客详情接口'
-    }
+
+    // return {
+    //   message: '获取博客详情接口'
+    // }
+    const id = req.query.id
+    let blogDetail = getBlogDetail(id)
+    return new SuccessModel(blogDetail)
   }
   if(method == 'POST' && path == '/api/blog/addNew'){
-    return {
-      message: '新建博客接口'
-    }
+    const data = getAddNew(req.body) //req.body, 就是传进来的postdata
+    return new SuccessModel(data)
+    // return {
+    //   message: '新建博客接口'
+    // }
   }
   if(method == 'POST' && path == '/api/blog/update'){
     return {
