@@ -23,10 +23,18 @@ const getAddNew = (postData = {}) => { // 此处将 postdata 默认为{} 做一�
     id: 3 // 反回一个, 新建博客后的一个id
   }
 }
-// const getUpdate
-// const getDel
+// 更新博客需要 id, 和 postdata;
+const updateBlog = (id, postData = {}) => {
+  return true
+}
+const delBlog = (id) => {
+  return false
+}
+
 module.exports = {
   getList,
   getBlogDetail,
-  getAddNew
+  getAddNew,
+  updateBlog,
+  delBlog
 }

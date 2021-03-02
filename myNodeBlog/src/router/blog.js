@@ -1,5 +1,5 @@
 const {SuccessModel, ErrorModel} = require('../model/resModel')
-const {getList, getBlogDetail, getAddNew} = require('../controller/blog')
+const {getList, getBlogDetail, getAddNew, updateBlog, delBlog} = require('../controller/blog')
 
 const handleBlogRouter = (req, res) => {
   const method = req.method
@@ -32,14 +32,18 @@ const handleBlogRouter = (req, res) => {
     // }
   }
   if(method == 'POST' && path == '/api/blog/update'){
-    return {
-      message: '修改博客接口'
+    const flag = updateBlog(req.query.id, req.body)
+    if(flag) {
+      return new SuccessModel() //这边不需要添加任何参数
     }
+    return new ErrorModel()
   }
   if(method == 'POST' && path == '/api/blog/del'){
-    return {
-      message: '删除博客接口'
+    const flag = delBlog(req.query.id)
+    if(flag) {
+      return new SuccessModel(null, '删除成功')
     }
+    return new ErrorModel(null, '删除失败')
   }
 
 }
