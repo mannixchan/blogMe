@@ -1,21 +1,23 @@
+const { exec } = require('../db/mysql')
 const getList = (author, keyword) => {
-  return [
-    {id: 1,
-    author: 'zhangshan',
-    createTime: 122222222222,
-    content: '内容A',
-    title: '标题A'
-    }
-  ]
+// sql 语句拼接的时候, 后面一定要留空格, 否则会报错
+let sql = `select * from blogs where 1=1 ` // 此处用1=1是为了拼接后面
+if(author) {
+  sql += `and author='${author}' `
+}
+if(keyword) {
+  sql += `and title like '%${keyword}%' `
+}
+sql += `order by createtime desc `
+// 此处返回一个 promise, 接数据的时候也要小心, 进行promise处理
+return exec(sql)
 }
 const getBlogDetail = (id) => {
-  return {
-    id: id,
-    author: 'lisi',
-    createTime: 234444444443,
-    content: '内容b',
-    title: '标题A'
-  }
+let sql = `select * from blogs where id='${id}' `
+return exec(sql).then(rows => {
+  return rows[0]
+})
+
 }
 const getAddNew = (postData = {}) => { // 此处将 postdata 默认为{} 做一下兼容
   // postData是新建 blog 的内容

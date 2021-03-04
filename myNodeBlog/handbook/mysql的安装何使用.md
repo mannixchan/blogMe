@@ -46,5 +46,14 @@ select * from users where username='zhangsan' and `password`='123'; -- 多重条
 select * from users where username='zhangsan' or `password`='123'; -- 或者查询
 select * from users where username like '%zhang%'; -- 模糊查询 like 语句
 select * from users where username like '%zhang%' order by id; -- 排序查询, 倒序在结尾添加desc
+
+
+--更新
+update users set realname='李四2' where usernme='lisi'; -- 如果报安全问题, 可能需要执行下面的语句
+SET SQL_SAFE_UPDATES=0
+
+
+-- 删除
+delete from users where username='lisi';
 ```
 

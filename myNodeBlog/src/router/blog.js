@@ -9,20 +9,17 @@ const handleBlogRouter = (req, res) => {
     console.log(req.query)
     const author = req.query.author
     const keyword = req.query.keyword
-    let dataList = getList(author, keyword)
-    return new SuccessModel(dataList)
-    // return {
-    //   message: '获取博客列表'
-    // }
+    let result = getList(author, keyword) // 此处结果为promise
+    return result.then(dataList => {
+      return new SuccessModel(dataList)
+    })
   }
   if(method == 'GET' && path == '/api/blog/detail') {
-
-    // return {
-    //   message: '获取博客详情接口'
-    // }
     const id = req.query.id
-    let blogDetail = getBlogDetail(id)
-    return new SuccessModel(blogDetail)
+    let blogDetailResult = getBlogDetail(id)
+    return blogDetailResult.then(blogDetail => {
+      return new SuccessModel(blogDetail)
+    })
   }
   if(method == 'POST' && path == '/api/blog/addNew'){
     const data = getAddNew(req.body) //req.body, 就是传进来的postdata

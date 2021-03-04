@@ -52,13 +52,18 @@ const serverHandle = (req, res) => {
 		req.body = postData
 
 		// 处理 blog 路由
-		let blogData = handleBlogRouter(req, res)
-		if (blogData) {
-			res.end(
-				JSON.stringify(blogData)
-			)
-			return
+		let blogResult = handleBlogRouter(req, res)
+		if(blogResult) {
+			blogResult.then(blogData => {
+				console.log(blogData)
+				res.end(
+					JSON.stringify(blogData)
+				)
+				
+		})
+		return
 		}
+		
 		// 处理 user 路由
 		let userData = handleUserRouter(req, res)
 		if (userData) {
