@@ -20,17 +20,42 @@ return exec(sql).then(rows => {
 
 }
 const getAddNew = (postData = {}) => { // 此处将 postdata 默认为{} 做一下兼容
+  const title = postData.title
+  const content = postData.content
+  const author = postData.author
+  const createTime = Date.now()
   // postData是新建 blog 的内容
-  return {
-    id: 3 // 反回一个, 新建博客后的一个id
-  }
+  let sql = `insert into blogs(author, content, createTime, title) values('${author}','${content}',${createTime}, '${title}') `
+  return exec(sql).then(res => {
+    if(res.insertId) {
+      return  {
+        id: res.insertId
+      }
+    }
+  })
+
 }
 // 更新博客需要 id, 和 postdata;
 const updateBlog = (id, postData = {}) => {
-  return true
+  const title = postData.title
+  const content = postData.content
+  const author = postData.author
+  let sql = `update blogs set title='${title}', content='${content}', author='${author}' where id='${id}'`
+  // return true
+  return exec(sql).then(res => {
+        if(res.affectedRows > 0) {
+          return true
+        }
+  })
 }
 const delBlog = (id) => {
-  return false
+  // return false
+  let sql = `delete from blogs where id=${id} `
+  return exec(sql).then(res => {
+    if(res.affectedRows> 0) {
+      return true
+    }
+  })
 }
 
 module.exports = {

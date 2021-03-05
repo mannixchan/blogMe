@@ -6,11 +6,14 @@ const handleUserRouter = (req, res) => {
   const path = url.split('?')[0] // 获取路由
   
   if(method == 'POST' && path == '/api/user/login'){
-    const flag = login(req.body)
-    if(flag) {
-      return new SuccessModel()
-    }
-    return new ErrorModel()
+    const result = login(req.body)
+    return result.then(res => {
+      if(res.username) {
+        return new SuccessModel('登陆成功')
+      }
+      return new ErrorModel('登陆失败')
+    })
+
     // return {
     //   message: '登录博客博客接口'
     // }

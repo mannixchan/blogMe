@@ -53,23 +53,30 @@ const serverHandle = (req, res) => {
 
 		// 处理 blog 路由
 		let blogResult = handleBlogRouter(req, res)
-		if(blogResult) {
+		if (blogResult) {
 			blogResult.then(blogData => {
 				console.log(blogData)
 				res.end(
 					JSON.stringify(blogData)
 				)
-				
-		})
-		return
-		}
-		
-		// 处理 user 路由
-		let userData = handleUserRouter(req, res)
-		if (userData) {
-			res.end(JSON.stringify(userData))
+
+			})
 			return
 		}
+
+		// 处理 user 路由
+		let userDataResult = handleUserRouter(req, res)
+		if (userDataResult) {
+			userDataResult.then(userData => {
+				if (userData) {
+					res.end(JSON.stringify(userData))
+
+				}
+			})
+			return
+		}
+
+
 		res.writeHead(404, {
 			'Content-Type': 'text/plain'
 		})
