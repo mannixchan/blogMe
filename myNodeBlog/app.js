@@ -1,6 +1,8 @@
 const handleBlogRouter = require('./src/router/blog')
 const handleUserRouter = require('./src/router/user')
 const queryString = require('querystring')
+// 定义一个用来存储 session 的对象
+let SESSION_DATA = {}
 // 此函数用来获取postdata的请求体
 const getPostdata = function (req) {
 	const promise = new Promise((resolve, reject) => {
@@ -41,7 +43,30 @@ const serverHandle = (req, res) => {
 
 	// 解析 query, ?后面的
 	req.query = queryString.parse(url.split('?')[1])
+	// 解析客户端携带的 cookie
+	req.cookie = {}
+	const cookieStr = req.headers.cookie || '' // 防空做兼容处理, 本来 cookie 也就是有规律的字符串而已
+	cookieStr.split(';').forEach(item => {
+		if (!item) {
+			return
+		}
+		const arr = item.split('=')
+		const key = arr[0].trim()
+		const val = arr[1].trim()
+		req.cookie[key] = val
 
+	})
+	// 解析 session
+	let userId = req.cookie.userid
+	if(userId) { // 如果有userId
+		if(!SESSION_DATA[userId]) {
+			SESSION_DATA[userId] = {}
+		}
+		req.session = SESSION_DATA[userId]
+	} else { 
+		// 如果没有 userId 则生成一个 userId
+		userId = `${new Date()}_${Math.random()}`
+	}
 	// 返回前设置一下返回格式
 	res.setHeader('Content-type', 'application/json')
 
