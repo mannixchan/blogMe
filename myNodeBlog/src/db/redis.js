@@ -14,7 +14,27 @@ function set(key, val) {
   redisClient.set(key, val, redis.print)
 }
 function get(key) {
-
+ const promise = new Promise((resolve, reject) => {
+   redisClient.get(key, (err, val) => {
+     if (err) {
+       console.error(err)
+       return
+     }
+     if (val === null) {
+       resolve(null)
+       return
+     }
+     // 这里的 try catch 并不是为了抓取错误, 而是想兼容 JSON 转换的格式
+     try {
+      resolve(
+        JSON.parse(val)
+      )
+     } catch(ex) {
+       resolve(val)
+     }
+   })
+ })
+ return promise
 }
 module.exports =  {
   set,
