@@ -3,6 +3,14 @@ const handleUserRouter = require('./src/router/user')
 const queryString = require('querystring')
 // 定义一个用来存储 session 的对象
 let SESSION_DATA = {}
+// 设置 cookie 到期时间
+const getExpireTime = () => {
+  const d = new Date()
+  const dStamp = d.getTime() + (24 * 60 * 60 * 1000)
+  d.setTime(dStamp)
+  console.log('expired time is.........' , d.toGMTString())
+  return d.toGMTString()
+}
 // 此函数用来获取postdata的请求体
 const getPostdata = function (req) {
 	const promise = new Promise((resolve, reject) => {
@@ -57,16 +65,21 @@ const serverHandle = (req, res) => {
 
 	})
 	// 解析 session
-	let userId = req.cookie.userid
+	let needSetCookie = false
+	let userId = req.cookie.userId
+	console.log('userId is... ' , userId)
 	if(userId) { // 如果有userId
-		if(!SESSION_DATA[userId]) {
+		if(!SESSION_DATA[userId]) { 
 			SESSION_DATA[userId] = {}
 		}
 		req.session = SESSION_DATA[userId]
 	} else { 
+		needSetCookie = true
 		// 如果没有 userId 则生成一个 userId
-		userId = `${new Date()}_${Math.random()}`
+		userId = `${new Date().getTime()}_${Math.random()}`
+		SESSION_DATA[userId] = {}
 	}
+	req.session = SESSION_DATA[userId]
 	// 返回前设置一下返回格式
 	res.setHeader('Content-type', 'application/json')
 
@@ -80,6 +93,9 @@ const serverHandle = (req, res) => {
 		let blogResult = handleBlogRouter(req, res)
 		if (blogResult) {
 			blogResult.then(blogData => {
+				if(needSetCookie) {
+					res.setHeader('Set-Cookie', `userId=${userId}; path=/; httpOnly; expires=${getExpireTime()}`)  // httpOnly表示只允许后端修改
+				}
 				console.log(blogData)
 				res.end(
 					JSON.stringify(blogData)
@@ -92,7 +108,11 @@ const serverHandle = (req, res) => {
 		// 处理 user 路由
 		let userDataResult = handleUserRouter(req, res)
 		if (userDataResult) {
+
 			userDataResult.then(userData => {
+				if(needSetCookie) {
+					res.setHeader('Set-Cookie', `userId=${userId}; path=/; httpOnly; expires=${getExpireTime()}`)  // httpOnly表示只允许后端修改
+				}
 				if (userData) {
 					res.end(JSON.stringify(userData))
 
