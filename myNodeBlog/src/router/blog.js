@@ -1,6 +1,14 @@
 const { SuccessModel, ErrorModel } = require('../model/resModel')
 const { getList, getBlogDetail, getAddNew, updateBlog, delBlog } = require('../controller/blog')
 
+// 设置同意登录验证函数
+const loginCheck = (req) => {
+  if (!req.session.username) {
+    return Promise.resolve(new ErrorModel(
+      '尚未登录'
+    ))
+  }
+}
 const handleBlogRouter = (req, res) => {
   const method = req.method
   const url = req.url // 路由+queryString
@@ -22,6 +30,11 @@ const handleBlogRouter = (req, res) => {
     })
   }
   if (method == 'POST' && path == '/api/blog/addNew') {
+    const loginCheckResult = loginCheck(req)
+    if (loginCheckResult) {
+      return loginCheckResult
+    }
+    res.body.username = req.session.username
     const data = getAddNew(req.body) //req.body, 就是传进来的postdata
     // return new SuccessModel(data)
     return data.then(res => {
@@ -32,6 +45,10 @@ const handleBlogRouter = (req, res) => {
     // }
   }
   if (method == 'POST' && path == '/api/blog/update') {
+    const loginCheckResult = loginCheck(req)
+    if (loginCheckResult) {
+      return loginCheckResult
+    }
     const result = updateBlog(req.query.id, req.body)
     return result.then(flag => {
       console.log(flag)
@@ -44,6 +61,11 @@ const handleBlogRouter = (req, res) => {
 
   }
   if (method == 'POST' && path == '/api/blog/del') {
+    const loginCheckResult = loginCheck(req)
+    if (loginCheckResult) {
+      return loginCheckResult
+    }
+    const author = req.session.username // 修改用户必须是自己, 所以, 要做 id 和作者双重认证
     const result = delBlog(req.query.id)
     return result.then(flag => {
       if (flag) {
