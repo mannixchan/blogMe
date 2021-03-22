@@ -15,8 +15,15 @@ const handleBlogRouter = (req, res) => {
   const path = url.split('?')[0] // 获取路由
   if (method == 'GET' && path == '/api/blog/list') { // path这边前面必须要加/, 要不然报错
     console.log(req.query)
-    const author = req.query.author
-    const keyword = req.query.keyword
+    let author = req.query.author || ''
+    const keyword = req.query.keyword || ''
+    if(req.query.isadmin) {
+      const loginCheckResult = loginCheck(req)
+      if(loginCheckResult) {
+        return loginCheckResult
+      }
+      author = req.session.username
+    }
     let result = getList(author, keyword) // 此处结果为promise
     return result.then(dataList => {
       return new SuccessModel(dataList)
@@ -29,12 +36,12 @@ const handleBlogRouter = (req, res) => {
       return new SuccessModel(blogDetail)
     })
   }
-  if (method == 'POST' && path == '/api/blog/addNew') {
+  if (method == 'POST' && path == '/api/blog/new') {
     const loginCheckResult = loginCheck(req)
     if (loginCheckResult) {
       return loginCheckResult
     }
-    res.body.username = req.session.username
+    req.body.username = req.session.username
     const data = getAddNew(req.body) //req.body, 就是传进来的postdata
     // return new SuccessModel(data)
     return data.then(res => {
@@ -49,6 +56,7 @@ const handleBlogRouter = (req, res) => {
     if (loginCheckResult) {
       return loginCheckResult
     }
+    req.body.username = req.session.username
     const result = updateBlog(req.query.id, req.body)
     return result.then(flag => {
       console.log(flag)

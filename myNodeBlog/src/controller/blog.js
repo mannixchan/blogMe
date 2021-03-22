@@ -22,7 +22,7 @@ return exec(sql).then(rows => {
 const getAddNew = (postData = {}) => { // 此处将 postdata 默认为{} 做一下兼容
   const title = postData.title
   const content = postData.content
-  const author = postData.author
+  const author = postData.username
   const createTime = Date.now()
   // postData是新建 blog 的内容
   let sql = `insert into blogs(author, content, createTime, title) values('${author}','${content}',${createTime}, '${title}') `
@@ -39,7 +39,7 @@ const getAddNew = (postData = {}) => { // 此处将 postdata 默认为{} 做一�
 const updateBlog = (id, postData = {}) => {
   const title = postData.title
   const content = postData.content
-  const author = postData.author
+  const author = postData.username
   let sql = `update blogs set title='${title}', content='${content}', author='${author}' where id='${id}'`
   // return true
   return exec(sql).then(res => {

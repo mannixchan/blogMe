@@ -6,10 +6,8 @@ const handleUserRouter = (req, res) => {
   let url = req.url // 路由+queryString
   let path = url.split('?')[0] // 获取路由
   
-  if(method == 'POST' && path == '/api/user/login'){  // 借来下来要做的是改成 get 请求方法, 来做先做测试 todo...
-    const {username, password} = req.query
-    let result = login({username, password})
-    // let result = login(req.body)
+  if(method == 'POST' && path == '/api/user/login'){ 
+    let result = login(req.body)
     return result.then(data => {
       if(data.username) {
         req.session.username = data.username
